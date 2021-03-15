@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http_request/http_service.dart';
+import 'package:http_request/post_detail.dart';
 
 import 'post_model.dart';
 
@@ -13,16 +14,33 @@ class PostsPage extends StatelessWidget {
         title: Text("Posts"),
       ),
       body: FutureBuilder(
-          future: httpService.getPosts(),
-          builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
-            if (snapshot.hasData) {
-              List<Post> posts = snapshot.data;
+        future: httpService.getPosts(),
+        builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+          if (snapshot.hasData) {
+            List<Post> posts = snapshot.data;
 
-              return ListView(
-                  children: posts.map((Post post) => Text(post.title)).toList());
-            }
-            return Center(child: CircularProgressIndicator());
-          },
+            return ListView(
+              children: posts
+                  .map(
+                    (Post post) => ListTile(
+                      title: Text(post.title),
+                      subtitle: Text(
+                        post.id.toString(),
+                      ),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PostDetail(
+                            post: post,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            );
+          }
+          return Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }
